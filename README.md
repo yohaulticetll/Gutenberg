@@ -1,4 +1,4 @@
-!(http://upload.wikimedia.org/wikipedia/commons/3/33/Gutenberg.jpg) Gutenberg (WIP)
+Gutenberg (WIP)
 =========
 
 When **Gutenberg** in 15 century has invented printing, knowledge has become more common.
@@ -12,7 +12,8 @@ USAGE
 
 Simple proof of usage:
 
-`<?php
+```php
+<?php
 use Gutenberg\Printable\gLabelsPrintable;
 use Gutenberg\Printer\CUPS\ZebraPrinterProfile;
 use Gutenberg\Printer\CUPSPrinter;
@@ -27,7 +28,8 @@ $data = [
 $gLabels = new gLabelsPrintable(new \SplFileInfo($argv[1]), $data);
 $profile = new ZebraPrinterProfile('Zebra-Printer');
 $printer = new CUPSPrinter();
-$printer->enqueue($printable,$profile);`
+$printer->enqueue($printable,$profile);
+```
 
 *Important!* Please note that CUPSPrinter requires also PrinterProfileInterface instance, because we have to specify where CUPS have to enqueue document.
 
