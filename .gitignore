@@ -1,0 +1,6 @@
+## has to remove when tests will be developed
+/tests
+/phpunit.xml
+
+/.idea
+*.iml
