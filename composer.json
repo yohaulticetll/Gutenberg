@@ -1,10 +1,10 @@
 {
     "name": "kofel/gutenberg",
-    "version": "0.1",
+    "description": "With the *kofel/gutenberg* library you can feel that PHP likes to have printing support.",
+    "license": "MIT",
     "require": {
-        "symfony/dependency-injection": "dev-master",
-        "symfony/console": "dev-master",
-        "symfony/process": "dev-master"
+        "php": "~5.5",
+        "symfony/process": "~2.6"
     },
     "require-dev": {
         "phpunit/phpunit": "4.3.5"
