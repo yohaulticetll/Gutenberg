@@ -1,5 +1,6 @@
 {
     "name": "kofel/gutenberg",
+    "version": "0.1",
     "require": {
         "symfony/dependency-injection": "dev-master",
         "symfony/console": "dev-master",
