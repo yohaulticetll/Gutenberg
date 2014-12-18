@@ -111,8 +111,7 @@ class CUPSPrinter {
             $this->getOptionArgumentsByPrinterProfile($printerProfile),
             [
                 '-P',
-                $printerProfile->getName(),
-                (string)$printable->getFile()
+                $printerProfile->getName()
             ]
         );
     }
