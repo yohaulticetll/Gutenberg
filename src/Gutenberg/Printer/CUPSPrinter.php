@@ -40,6 +40,7 @@ class CUPSPrinter {
         $processBuilder = new ProcessBuilder();
         $processBuilder->setArguments($this->getProcessArguments($printable, $printerProfile));
         $processBuilder->setTimeout(self::LPR_TIMEOUT);
+        $processBuilder->setInput($printable->getContent());
 
         try {
             $process = $processBuilder->getProcess();
