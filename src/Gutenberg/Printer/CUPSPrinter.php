@@ -45,7 +45,7 @@ class CUPSPrinter {
         try {
             $process = $processBuilder->getProcess();
             if (is_callable($this->processCallback)) {
-                $this->processCallback($process);
+                call_user_func($this->processCallback, $process);
             }
             $process->run();
 
