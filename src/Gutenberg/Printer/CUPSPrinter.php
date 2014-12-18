@@ -27,6 +27,11 @@ class CUPSPrinter {
     private $lprBinaryPath = 'lpr';
 
     /**
+     * @var callable
+     */
+    private $processCallback;
+
+    /**
      * @param PrintableFileInterface $printable
      * @param PrinterProfileInterface $printerProfile
      */
@@ -38,6 +43,9 @@ class CUPSPrinter {
 
         try {
             $process = $processBuilder->getProcess();
+            if (is_callable($this->processCallback)) {
+                $this->processCallback($process);
+            }
             $process->run();
 
             if (!$process->isSuccessful()) {
@@ -106,5 +114,13 @@ class CUPSPrinter {
                 (string)$printable->getFile()
             ]
         );
+    }
+
+    /**
+     * @param callable $processCallback
+     */
+    public function setProcessCallback($processCallback)
+    {
+        $this->processCallback = $processCallback;
     }
 }

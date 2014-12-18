@@ -77,16 +77,11 @@ class gLabelsPrintable extends PrintableFile {
             $process = $processBuilder->getProcess();
             $process->run();
 
-            if (!$process->isSuccessful() || !empty($process->getErrorOutput())) {
+            if (!$process->isSuccessful() || !$cachedFile->isReadable()) {
                 throw new gLabelsException(
                     $process->getErrorOutput()
                 );
             }
-
-            if (!$cachedFile->isReadable())
-                throw new gLabelsException(
-                    'Failed to create output file.'
-                );
 
         }
         catch (RuntimeException $e) {
