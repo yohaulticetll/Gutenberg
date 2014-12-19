@@ -10,6 +10,10 @@ namespace Gutenberg\Printer\CUPS;
 
 
 class PrinterProfile implements PrinterProfileInterface {
+    const MEDIA_SIZE = 'media';
+    const MEDIA_SIZE_CUSTOM = 'media=Custom';
+    const FIT_TO_PAGE = 'fit-to-page';
+
     /**
      * Name of printer profile
      * @var string
@@ -30,7 +34,6 @@ class PrinterProfile implements PrinterProfileInterface {
         $this->name = $name;
         $this->options = $options;
     }
-
 
     /**
      * Get name of CUPS printer profile

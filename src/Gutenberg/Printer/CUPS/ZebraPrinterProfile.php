@@ -10,13 +10,15 @@ namespace Gutenberg\Printer\CUPS;
 
 
 class ZebraPrinterProfile extends PrinterProfile {
+    const LABEL_TOP = 'zeLabelTop';
+    const DARKNESS  = 'Darkness';
+
     /**
      * @return string
      */
     public function getOptions()
     {
         $defaultOptions = [
-            'fit-to-page' => null,
             'zeLabelTop'  => 0,
             'Darkness'    => 3
         ];

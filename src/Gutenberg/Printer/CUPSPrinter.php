@@ -12,13 +12,14 @@ namespace Gutenberg\Printer;
 use Gutenberg\Printable\PrintableInterface;
 use Gutenberg\Printer\CUPS\Exception\PrinterException;
 use Gutenberg\Printer\CUPS\Exception\InvalidPrinterProfileException;
+use Gutenberg\Printer\CUPS\PrinterProfile;
 use Gutenberg\Printer\CUPS\PrinterProfileInterface;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\ProcessBuilder;
 
 class CUPSPrinter {
-    const LPR_TIMEOUT = 2;
+    const LPR_TIMEOUT = 30;
 
     /**
      * Path to CUPS's lpr binary
@@ -93,7 +94,7 @@ class CUPSPrinter {
 
         foreach ($printerProfile->getOptions() as $key => $value) {
             $arguments[] = '-o';
-            $arguments[] = $value !== null ? implode('=', [$key, $value]) : $key;
+            $arguments[] = $value !== null ? implode($key == PrinterProfile::MEDIA_SIZE_CUSTOM ? '.' : '=', [$key, $value]) : $key;
         }
 
         return $arguments;
@@ -111,8 +112,7 @@ class CUPSPrinter {
             $this->getOptionArgumentsByPrinterProfile($printerProfile),
             [
                 '-P',
-                $printerProfile->getName(),
-                (string)$printable->getFile()
+                $printerProfile->getName()
             ]
         );
     }
