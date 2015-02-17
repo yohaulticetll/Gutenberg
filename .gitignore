@@ -2,5 +2,6 @@
 /tests
 /phpunit.xml
 
+/tmp
 /.idea
 *.iml

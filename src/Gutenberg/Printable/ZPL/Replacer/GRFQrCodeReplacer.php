@@ -36,7 +36,7 @@ class GRFQrCodeReplacer extends VariableReplacer {
                     $imageBox   = new ImageBox($image);
                     $grf        = GRF::fromImage(
                         $imageBox->getReplacedByImage(
-                            ImageQRCode::encode($replaced)//->resize($image->getWidth(), $image->getHeight())
+                            ImageQRCode::encode($replaced)
                         )
                     );
 

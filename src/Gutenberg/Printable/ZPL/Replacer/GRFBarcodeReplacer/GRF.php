@@ -126,8 +126,8 @@ class GRF {
 
         $bits = '';
 
-        for ($x = 0; $x < $image->getWidth(); $x++) {
-            for ($y = 0; $y < $image->getHeight(); $y++) {
+        for ($y = 0; $y < $image->getHeight(); $y++) {
+            for ($x = 0; $x < $image->getWidth(); $x++) {
                 $bits  .= $image->isFilledAt($x, $y) ? '1' : '0';
             }
         }

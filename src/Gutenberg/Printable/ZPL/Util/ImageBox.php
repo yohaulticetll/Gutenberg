@@ -67,8 +67,8 @@ class ImageBox {
         $this->x = $min[0];
         $this->y = $min[1];
 
-        $this->width = $max[0] - $this->x;
-        $this->height = $max[1] - $this->y;
+        $this->width = $max[0] - $this->x + 1;
+        $this->height = $max[1] - $this->y + 1;
     }
 
     /**
@@ -81,8 +81,8 @@ class ImageBox {
 
         return $image->insert(
             $replacement,
-            $this->y,
             $this->x,
+            $this->y,
             $this->width,
             $this->height
         );

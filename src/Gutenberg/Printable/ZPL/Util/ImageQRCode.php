@@ -42,7 +42,7 @@ class ImageQRCode {
         $process = ProcessBuilder::create([
             'qrencode',
             '-l',
-            'M',
+            'L',
             '-s',
             '8',
             '-m',
