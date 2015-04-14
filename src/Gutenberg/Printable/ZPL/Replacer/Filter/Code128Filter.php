@@ -9,8 +9,12 @@
 namespace Gutenberg\Printable\ZPL\Replacer\Filter;
 
 
-class Code128Filter implements FilterInterface
+class Code128Filter
 {
+    const CODE_A = 0x1;
+    const CODE_B = 0x2; // normal
+    const CODE_C = 0x3; // numeric
+
     /**
      * Filter given value
      * @param $value
@@ -18,24 +22,33 @@ class Code128Filter implements FilterInterface
      */
     public function filterValue($value, $arguments = [])
     {
-        $lastNumeric = null;
+        $strlen     = strlen($value);
+        $output     = '';
+        $lastCode   = null;
 
-        for ($i = 0; $i < strlen($value); $i++) {
-            $chr = $value[$i];
+        for ($i = 0; $i < $strlen; $i++) {
+            $chr        = $value[$i];
+            $chrNext    = isset($value[$i+1]) ? $value[$i+1] : null;
+            $nextCode = is_numeric($chr) && $chrNext !== NULL && is_numeric($chrNext) ? self::CODE_C : self::CODE_B;
 
-            if (!is_numeric($chr)) {
-                $lastNumeric = null;
+            if (empty($output)) {
+                $output .= ($nextCode == self::CODE_C) ? '>;' : '>:';
             }
-            elseif (!$lastNumeric) {
-                $lastNumeric = $i;
+
+            if ($lastCode && $nextCode != $lastCode) {
+                $output .= ($nextCode == self::CODE_C) ? '>5' : '>6';
+            }
+
+            $output     .= $chr;
+            $lastCode   = $nextCode;
+
+            if ($nextCode == self::CODE_C) {
+                $output .= $chrNext;
+                $i++;
             }
         }
 
-        if ($lastNumeric) {
-            return substr($value, 0, $lastNumeric) . '>5' . substr($value, $lastNumeric);
-        }
-
-        return $value;
+        return $output;
     }
 
     /**

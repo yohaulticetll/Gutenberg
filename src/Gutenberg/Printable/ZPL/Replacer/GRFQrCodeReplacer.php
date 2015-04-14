@@ -32,7 +32,7 @@ class GRFQrCodeReplacer extends VariableReplacer {
                 $raw = trim(ImageQRCode::decode($image));
                 $replaced = parent::replace($raw, $params);
 
-                if ($raw !== null && $raw != $replaced) {
+                if ($raw !== null && $raw != $replaced && !empty($replaced)) {
                     $imageBox   = new ImageBox($image);
                     $grf        = GRF::fromImage(
                         $imageBox->getReplacedByImage(
@@ -56,4 +56,3 @@ class GRFQrCodeReplacer extends VariableReplacer {
         return $zpl;
     }
 }
-

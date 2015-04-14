@@ -17,7 +17,7 @@ class DateFilter implements FilterInterface {
      */
     public function filterValue($value, $arguments = [])
     {
-        if (!$value instanceof \DateTime) {
+        if (!($value instanceof \DateTime)) {
             $value = new \DateTime($value);
         }
 
