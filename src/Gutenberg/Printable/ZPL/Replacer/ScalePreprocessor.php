@@ -58,6 +58,7 @@ class ScalePreprocessor implements PreprocessorInterface
 
         $zpl = $this->replaceFieldTypeset($zpl, $ratio);
         $zpl = $this->replacePrintWidth($zpl, $ratio);
+        $zpl = $this->replacePrintLength($zpl, $ratio);
         $zpl = $this->replaceBarcodeField($zpl, $ratio);
         $zpl = $this->replaceFont($zpl, $ratio);
         $zpl = $this->replaceFontTTF($zpl, $ratio);
@@ -110,10 +111,33 @@ class ScalePreprocessor implements PreprocessorInterface
             function ($matches) use ($ratio) {
                 $width = (int)$matches[1];
 
-                $targetWidth = floor($width * $ratio);
+                $targetWidth = ceil($width * $ratio);
 
                 return sprintf(
                     '^PW%d',
+                    $targetWidth
+                );
+            },
+            $zpl
+        );
+    }
+
+    /**
+     * @param $zpl
+     * @param $ratio
+     * @return mixed
+     */
+    public function replacePrintLength($zpl, $ratio)
+    {
+        return preg_replace_callback(
+            '/\^LL(\d+)/',
+            function ($matches) use ($ratio) {
+                $width = (int)$matches[1];
+
+                $targetWidth = ceil($width * $ratio);
+
+                return sprintf(
+                    '^LL%d',
                     $targetWidth
                 );
             },
@@ -191,8 +215,8 @@ class ScalePreprocessor implements PreprocessorInterface
                 $r = (int)$matches[2];
                 $h = (int)$matches[3];
 
-                $targetW = floor($w * $ratio);
-                $targetH = floor($h * $ratio);
+                $targetW = ceil($w * $ratio);
+                $targetH = ceil($h * $ratio);
 
                 return sprintf(
                     '^BY%s,%d,%d',
