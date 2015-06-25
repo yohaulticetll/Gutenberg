@@ -21,6 +21,12 @@ class PrinterProfile implements PrinterProfileInterface {
     protected $name;
 
     /**
+     * Workstation identifier
+     * @var string
+     */
+    protected $workstation;
+
+    /**
      * @var array
      */
     protected $options = [];
@@ -72,6 +78,25 @@ class PrinterProfile implements PrinterProfileInterface {
     public function setOption($key, $value)
     {
         $this->options[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWorkstation()
+    {
+        return $this->workstation;
+    }
+
+    /**
+     * Set workstation identifier
+     * @param string $workstation
+     */
+    public function setWorkstation($workstation)
+    {
+        $this->workstation = $workstation;
 
         return $this;
     }

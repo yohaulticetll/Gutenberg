@@ -17,6 +17,12 @@ interface PrinterProfileInterface {
     public function getName();
 
     /**
+     * Get workstation identifier
+     * @return string
+     */
+    public function getWorkstation();
+
+    /**
      * @return string
      */
     public function getOptions();
@@ -33,4 +39,10 @@ interface PrinterProfileInterface {
      * @return self
      */
     public function setOption($key, $value);
+
+    /**
+     * @param string $workstation
+     * @return self
+     */
+    public function setWorkstation($workstation);
 }
