@@ -97,11 +97,27 @@ class ImageBox {
     }
 
     /**
+     * @param int $x
+     */
+    public function setX($x)
+    {
+        $this->x = $x;
+    }
+
+    /**
      * @return int
      */
     public function getY()
     {
         return $this->y;
+    }
+
+    /**
+     * @param int $y
+     */
+    public function setY($y)
+    {
+        $this->y = $y;
     }
 
     /**
@@ -113,10 +129,26 @@ class ImageBox {
     }
 
     /**
+     * @param int $width
+     */
+    public function setWidth($width)
+    {
+        $this->width = $width;
+    }
+
+    /**
      * @return int
      */
     public function getHeight()
     {
         return $this->height;
+    }
+
+    /**
+     * @param int $height
+     */
+    public function setHeight($height)
+    {
+        $this->height = $height;
     }
 }

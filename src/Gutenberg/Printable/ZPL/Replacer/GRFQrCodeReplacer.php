@@ -14,19 +14,13 @@ use Gutenberg\Printable\ZPL\Util\ImageBox;
 use Gutenberg\Printable\ZPL\Util\ImageQRCode;
 
 class GRFQrCodeReplacer extends VariableReplacer {
-    const REGEXP_GRF = '/~DG(\d+.GRF),\d+,(\d+),([^\~\^]+)/';
-    const BUILD_GRF  = '~DG%s,%d,%d,%s';
+    use ImageReplacerTrait;
 
     public function replace($zpl, $params)
     {
-        $zpl = preg_replace_callback(
-            self::REGEXP_GRF,
-            function ($matches) use ($params) {
-                $name           = $matches[1];
-                $bytesPerRow    = $matches[2];
-                $bytes          = $matches[3];
-
-                $grf = new GRF($bytes, $bytesPerRow);
+        $zpl = $this->replaceImages(
+            $zpl,
+            function ($grf) use ($params) {
                 $image = $grf->toImage();
 
                 $raw = trim(ImageQRCode::decode($image));
@@ -34,23 +28,14 @@ class GRFQrCodeReplacer extends VariableReplacer {
 
                 if ($raw !== null && $raw != $replaced && !empty($replaced)) {
                     $imageBox   = new ImageBox($image);
-                    $grf        = GRF::fromImage(
+
+                    return GRF::fromImage(
                         $imageBox->getReplacedByImage(
                             ImageQRCode::encode($replaced)
                         )
                     );
-
-                    return sprintf(self::BUILD_GRF,
-                        $name,
-                        strlen($grf->getBytes()) / 2,
-                        $grf->getBytesPerRow(),
-                        $grf->getBytes()
-                    );
                 }
-
-                return $matches[0];
-            },
-            $zpl
+            }
         );
 
         return $zpl;

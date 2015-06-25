@@ -16,6 +16,7 @@ use Gutenberg\Printer\CUPS\PrinterProfile;
 use Gutenberg\Printer\CUPS\PrinterProfileInterface;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\RuntimeException;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
 class CUPSPrinter {
@@ -28,9 +29,19 @@ class CUPSPrinter {
     private $lprBinaryPath = 'lpr';
 
     /**
-     * @var callable
+     * Instance of builder which will create process executor
+     * @var ProcessBuilder
      */
-    private $processCallback;
+    private $processBuilder;
+
+    /**
+     * CUPSPrinter constructor.
+     * @param ProcessBuilder $processBuilder
+     */
+    public function __construct(ProcessBuilder $processBuilder)
+    {
+        $this->processBuilder = $processBuilder;
+    }
 
     /**
      * @param PrintableFileInterface $printable
@@ -38,29 +49,17 @@ class CUPSPrinter {
      */
     public function enqueue(PrintableInterface $printable, PrinterProfileInterface $printerProfile)
     {
-        $processBuilder = new ProcessBuilder();
+        $processBuilder = $this->processBuilder;
         $processBuilder->setArguments($this->getProcessArguments($printable, $printerProfile));
         $processBuilder->setTimeout(self::LPR_TIMEOUT);
         $processBuilder->setInput($printable->getContent());
 
         try {
             $process = $processBuilder->getProcess();
-            if (is_callable($this->processCallback)) {
-                call_user_func($this->processCallback, $process);
-            }
             $process->run();
 
             if (!$process->isSuccessful()) {
-                $errorOutput = $process->getErrorOutput();
-
-                if (strpos($errorOutput, 'The printer or class does not exist.') !== false)
-                    throw new InvalidPrinterProfileException(
-                        'Printer profile does not exist.'
-                    );
-                else
-                    throw new PrinterException(
-                        $process->getErrorOutput()
-                    );
+                $this->handleProcessFailures($process);
             }
         }
         catch (RuntimeException $e) {
@@ -116,6 +115,25 @@ class CUPSPrinter {
             ]
         );
     }
+
+    /**
+     * @param Process $process
+     */
+    protected function handleProcessFailures(Process $process)
+    {
+        $errorOutput = $process->getErrorOutput();
+
+        if (strpos($errorOutput, 'The printer or class does not exist.') !== false) {
+            throw new InvalidPrinterProfileException(
+                'Printer profile does not exist.'
+            );
+        } else {
+            throw new PrinterException(
+                $process->getErrorOutput()
+            );
+        }
+    }
+
 
     /**
      * @param callable $processCallback
