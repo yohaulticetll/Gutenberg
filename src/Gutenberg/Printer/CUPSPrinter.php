@@ -11,7 +11,7 @@ namespace Gutenberg\Printer;
 
 use Gutenberg\Printable\PrintableInterface;
 use Gutenberg\Printer\CUPS\Exception\PrinterException;
-use Gutenberg\Printer\CUPS\Exception\InvalidPrinterProfileException;
+use Gutenberg\Printer\CUPS\Exception\PrinterProfileNotFoundException;
 use Gutenberg\Printer\CUPS\PrinterProfile;
 use Gutenberg\Printer\CUPS\PrinterProfileInterface;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
@@ -124,7 +124,7 @@ class CUPSPrinter {
         $errorOutput = $process->getErrorOutput();
 
         if (strpos($errorOutput, 'The printer or class does not exist.') !== false) {
-            throw new InvalidPrinterProfileException(
+            throw new PrinterProfileNotFoundException(
                 'Printer profile does not exist.'
             );
         } else {

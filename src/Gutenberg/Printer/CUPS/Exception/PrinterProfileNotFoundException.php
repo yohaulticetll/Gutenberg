@@ -9,6 +9,6 @@
 namespace Gutenberg\Printer\CUPS\Exception;
 
 
-class InvalidPrinterProfileException extends \InvalidArgumentException {
+class PrinterProfileNotFoundException extends \InvalidArgumentException {
 
 }
