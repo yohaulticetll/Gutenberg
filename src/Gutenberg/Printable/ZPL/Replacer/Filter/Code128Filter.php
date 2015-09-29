@@ -29,14 +29,28 @@ class Code128Filter
         for ($i = 0; $i < $strlen; $i++) {
             $chr        = $value[$i];
             $chrNext    = isset($value[$i+1]) ? $value[$i+1] : null;
-            $nextCode = is_numeric($chr) && $chrNext !== NULL && is_numeric($chrNext) ? self::CODE_C : self::CODE_B;
+            $nextCode   = self::CODE_B;
+
+            if (is_numeric($chr) && $chrNext !== NULL && is_numeric($chrNext)) {
+                $nextCode = self::CODE_C;
+            }
 
             if (empty($output)) {
-                $output .= ($nextCode == self::CODE_C) ? '>;' : '>:';
+                if ($nextCode == self::CODE_C) {
+                    $output .= '>;';
+                }
+                else {
+                    $output .= '>:';
+                }
             }
 
             if ($lastCode && $nextCode != $lastCode) {
-                $output .= ($nextCode == self::CODE_C) ? '>5' : '>6';
+                if ($nextCode == self::CODE_C) {
+                    $output .= '>5';
+                }
+                else {
+                    $output .= '>6';
+                }
             }
 
             $output     .= $chr;
