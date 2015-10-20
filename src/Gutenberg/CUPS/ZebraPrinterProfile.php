@@ -6,7 +6,7 @@
  * Time: 00:37
  */
 
-namespace Gutenberg\Printer\CUPS;
+namespace Gutenberg\CUPS;
 
 
 class ZebraPrinterProfile extends PrinterProfile {

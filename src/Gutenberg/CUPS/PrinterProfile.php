@@ -6,7 +6,7 @@
  * Time: 11:25
  */
 
-namespace Gutenberg\Printer\CUPS;
+namespace Gutenberg\CUPS;
 
 
 class PrinterProfile implements PrinterProfileInterface {

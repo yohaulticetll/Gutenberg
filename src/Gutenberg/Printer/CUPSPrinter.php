@@ -9,78 +9,96 @@
 namespace Gutenberg\Printer;
 
 
+use Gutenberg\CUPS\Manager;
+use Gutenberg\CUPS\PrinterProfile;
+use Gutenberg\CUPS\PrinterProfileInterface;
+use Gutenberg\Printable\PrintableFileInterface;
 use Gutenberg\Printable\PrintableInterface;
-use Gutenberg\Printer\CUPS\Exception\PrinterException;
-use Gutenberg\Printer\CUPS\Exception\PrinterProfileNotFoundException;
-use Gutenberg\Printer\CUPS\PrinterProfile;
-use Gutenberg\Printer\CUPS\PrinterProfileInterface;
+use Gutenberg\Printer\Exception\PrinterException;
+use Gutenberg\Printer\Exception\PrinterTimeoutException;
+use ProcessUtil\Exception\ExecutableNotFoundException;
+use ProcessUtil\ProcessUtil;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
+/**
+ * Class CUPSPrinter
+ * @package Gutenberg\Printer
+ * @todo ExecutableNotFoundException implementation
+ */
 class CUPSPrinter {
-    const LPR_TIMEOUT = 30;
+    const PRINT_TIMEOUT = 3;
 
-    /**
-     * Path to CUPS's lpr binary
-     * @var string
-     */
-    private $lprBinaryPath = 'lpr';
+    /** @var Manager */
+    private $manager;
 
-    /**
-     * Instance of builder which will create process executor
-     * @var ProcessBuilder
-     */
-    private $processBuilder;
+    /** @var PrinterProfileInterface */
+    private $printerProfile;
 
     /**
      * CUPSPrinter constructor.
-     * @param ProcessBuilder $processBuilder
+     * @param Manager $manager
+     * @param PrinterProfileInterface $printerProfile
      */
-    public function __construct(ProcessBuilder $processBuilder)
+    public function __construct(Manager $manager, PrinterProfileInterface $printerProfile)
     {
-        $this->processBuilder = $processBuilder;
+        $this->manager = $manager;
+        $this->printerProfile = $printerProfile;
     }
 
     /**
-     * @param PrintableFileInterface $printable
-     * @param PrinterProfileInterface $printerProfile
+     * @return Manager
      */
-    public function enqueue(PrintableInterface $printable, PrinterProfileInterface $printerProfile)
+    public function getManager()
     {
-        $processBuilder = $this->processBuilder;
-        $processBuilder->setArguments($this->getProcessArguments($printable, $printerProfile));
-        $processBuilder->setTimeout(self::LPR_TIMEOUT);
-        $processBuilder->setInput($printable->getContent());
+        return $this->manager;
+    }
 
+    /**
+     * @return PrinterProfileInterface
+     */
+    public function getPrinterProfile()
+    {
+        return $this->printerProfile;
+    }
+
+    /**
+     * Get printer's name
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getPrinterProfile()->getName();
+    }
+
+    /**
+     * Push printable to print queue
+     * @param PrintableInterface $printable
+     * @throws PrinterTimeoutException
+     * @throws PrinterException
+     * @throws ExecutableNotFoundException
+     */
+    public function enqueue(PrintableInterface $printable)
+    {
         try {
-            $process = $processBuilder->getProcess();
-            $process->run();
-
-            if (!$process->isSuccessful()) {
-                $this->handleProcessFailures($process);
-            }
+            ProcessUtil::instance()
+                ->executeCommand(
+                    $this->getProcessArguments($printable, $this->printerProfile),
+                    function ($processBuilder) use ($printable) {
+                        /** @var ProcessBuilder $processBuilder */
+                        $processBuilder->setTimeout(self::PRINT_TIMEOUT);
+                        $processBuilder->setInput($printable->getContent());
+                    }
+                );
+        }
+        catch (ProcessTimedOutException $e) {
+            throw new PrinterTimeoutException('Print timeout.', 0, $e);
         }
         catch (RuntimeException $e) {
             throw new PrinterException($e->getMessage(), $e->getCode(), $e);
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getLprBinaryPath()
-    {
-        return $this->lprBinaryPath;
-    }
-
-    /**
-     * @param string $lprBinaryPath
-     */
-    public function setLprBinaryPath($lprBinaryPath)
-    {
-        $this->lprBinaryPath = $lprBinaryPath;
     }
 
     /**
@@ -104,10 +122,10 @@ class CUPSPrinter {
      * @param PrinterProfileInterface $printerProfile
      * @return array
      */
-    public function getProcessArguments(PrintableInterface $printable, PrinterProfileInterface $printerProfile)
+    protected function getProcessArguments(PrintableInterface $printable, PrinterProfileInterface $printerProfile)
     {
         return array_merge(
-            [$this->lprBinaryPath],
+            [$this->manager->getLprBinary()],
             $this->getOptionArgumentsByPrinterProfile($printerProfile),
             [
                 '-P',
@@ -132,14 +150,5 @@ class CUPSPrinter {
                 $process->getErrorOutput()
             );
         }
-    }
-
-
-    /**
-     * @param callable $processCallback
-     */
-    public function setProcessCallback($processCallback)
-    {
-        $this->processCallback = $processCallback;
     }
 }

@@ -5,5 +5,3 @@ if (!$loader = @include __DIR__.'/../vendor/autoload.php') {
         'curl -s http://getcomposer.org/installer | php'.PHP_EOL.
         'php composer.phar install'.PHP_EOL);
 }
-
-$loader->add('\\Gutenberg', __DIR__ . '/Gutenberg');

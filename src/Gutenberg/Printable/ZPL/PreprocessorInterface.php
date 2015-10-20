@@ -10,9 +10,9 @@ namespace Gutenberg\Printable\ZPL;
 interface PreprocessorInterface
 {
     /**
-     * @param $zpl code
+     * @param $zpl
      * @param $params array|callable
      * @return string preprocessed zpl code
      */
-    public function replace($zpl, $params);
+    public function replace($zpl, array $params = []);
 }

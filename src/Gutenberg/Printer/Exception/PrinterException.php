@@ -6,7 +6,7 @@
  * Time: 12:41
  */
 
-namespace Gutenberg\Printer\CUPS\Exception;
+namespace Gutenberg\Printer\Exception;
 
 
 class PrinterException extends \RuntimeException {

@@ -6,7 +6,7 @@
  * Time: 12:44
  */
 
-namespace Gutenberg\Printer\CUPS;
+namespace Gutenberg\CUPS;
 
 
 interface PrinterProfileInterface {

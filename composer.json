@@ -5,13 +5,17 @@
     "require": {
         "php": "~5.5",
         "symfony/process": "~2.6",
-        "twig/twig": "^1.22"
+        "twig/twig": "^1.22",
+        "kofel/process-util": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "4.3.5"
     },
     "autoload": {
         "psr-4": { "": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": {"TestUtil\\": "tests/TestUtil/"}
     },
     "authors": [
         {

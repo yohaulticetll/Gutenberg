@@ -20,34 +20,24 @@ class ZPLPrintable implements PrintableInterface {
     private $zpl;
 
     /**
-     * @var array
-     */
-    private $params;
-
-    /**
      * @var PreprocessorInterface[]
      */
     private $preprocessors = [];
 
     /**
-     * @return PreprocessorInterface[]
+     * @var array
      */
-    private function getPreprocessors()
-    {
-        return [
-            new VariableReplacer(),
-            new GRFQrCodeReplacer()
-        ];
-    }
+    private $params = [];
 
     /**
      * ZPLPrintable constructor.
-     * @param $zpl
+     * @param string $zpl
+     * @param ZPL\PreprocessorInterface[] $preprocessors
      */
-    public function __construct($zpl)
+    public function __construct($zpl, array $preprocessors)
     {
         $this->zpl = $zpl;
-        $this->preprocessors = $this->getPreprocessors();
+        $this->preprocessors = $preprocessors;
     }
 
     /**
@@ -67,7 +57,7 @@ class ZPLPrintable implements PrintableInterface {
      *
      * @param $params
      */
-    public function bindParams($params)
+    public function setParams(array $params)
     {
         $this->params = $params;
     }
@@ -89,7 +79,7 @@ class ZPLPrintable implements PrintableInterface {
      */
     public function getContent()
     {
-        return $this->preprocess($this->zpl, $this->params);
+        return $this->processContent($this->zpl, $this->params);
     }
 
     /**
@@ -97,7 +87,7 @@ class ZPLPrintable implements PrintableInterface {
      * @param $params
      * @return string
      */
-    private function preprocess($zpl, $params)
+    private function processContent($zpl, $params)
     {
         foreach ($this->preprocessors as $preprocessor) {
             $zpl = $preprocessor->replace($zpl, $params);

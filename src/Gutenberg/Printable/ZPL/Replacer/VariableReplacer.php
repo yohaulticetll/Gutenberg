@@ -23,10 +23,12 @@ class VariableReplacer implements PreprocessorInterface
      */
     private $twig;
 
+    /**
+     * VariableReplacer constructor.
+     */
     public function __construct()
     {
-        $this->twig = new \Twig_Environment(new \Twig_Loader_String());
-        $this->registerFilters();
+        $this->createTwigInstance();
     }
 
     /**
@@ -42,24 +44,26 @@ class VariableReplacer implements PreprocessorInterface
         ];
     }
 
-    public function replace($zpl, $params)
+    public function replace($zpl, array $params = [])
     {
         if (empty($zpl))
-            return;
+            return '';
 
         return $this->twig->render($zpl, $params);
     }
 
-    private function registerFilters()
+    private function createTwigInstance()
     {
+        $twig = new \Twig_Environment(new \Twig_Loader_String());
         foreach ($this->getFilters() as $filter) {
-            $this->twig->addFilter(
+            $twig->addFilter(
                 new \Twig_SimpleFilter($filter->getName(), function () use ($filter) {
                     $arguments = func_get_args();
                     $value = array_shift($arguments);
                     return $filter->filterValue($value, $arguments);
-                })
+                }, ['is_safe' => ['html']])
             );
         }
+        $this->twig = $twig;
     }
 }

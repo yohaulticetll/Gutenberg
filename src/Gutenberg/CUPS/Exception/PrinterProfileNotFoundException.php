@@ -6,7 +6,7 @@
  * Time: 12:58
  */
 
-namespace Gutenberg\Printer\CUPS\Exception;
+namespace Gutenberg\CUPS\Exception;
 
 
 class PrinterProfileNotFoundException extends \InvalidArgumentException {
