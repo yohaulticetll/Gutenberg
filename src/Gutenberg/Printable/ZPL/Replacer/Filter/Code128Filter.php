@@ -22,6 +22,7 @@ class Code128Filter
      */
     public function filterValue($value, $arguments = [])
     {
+        $value = (string)$value;
         $strlen     = strlen($value);
         $output     = '';
         $lastCode   = null;
