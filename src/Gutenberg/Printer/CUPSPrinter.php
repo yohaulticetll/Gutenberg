@@ -102,7 +102,7 @@ class CUPSPrinter {
         catch (ProcessFailedException $e) {
             $process = $e->getProcess();
 
-            if (null !== stripos($process->getErrorOutput(), 'The printer or class does not exist.')) {
+            if (false !== stripos($process->getErrorOutput(), 'The printer or class does not exist.')) {
                 throw new PrinterProfileNotFoundException($this->printerProfile, $e);
             }
 
@@ -144,23 +144,5 @@ class CUPSPrinter {
                 $printerProfile->getName()
             ]
         );
-    }
-
-    /**
-     * @param Process $process
-     */
-    protected function handleProcessFailures(Process $process)
-    {
-        $errorOutput = $process->getErrorOutput();
-
-        if (strpos($errorOutput, 'The printer or class does not exist.') !== false) {
-            throw new PrinterProfileNotFoundException(
-                'Printer profile does not exist.'
-            );
-        } else {
-            throw new PrinterException(
-                $process->getErrorOutput()
-            );
-        }
     }
 }
