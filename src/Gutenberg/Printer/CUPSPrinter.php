@@ -9,6 +9,7 @@
 namespace Gutenberg\Printer;
 
 
+use Gutenberg\CUPS\Exception\PrinterProfileNotFoundException;
 use Gutenberg\CUPS\Manager;
 use Gutenberg\CUPS\PrinterProfile;
 use Gutenberg\CUPS\PrinterProfileInterface;
@@ -18,6 +19,7 @@ use Gutenberg\Printer\Exception\PrinterException;
 use Gutenberg\Printer\Exception\PrinterTimeoutException;
 use ProcessUtil\Exception\ExecutableNotFoundException;
 use ProcessUtil\ProcessUtil;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
@@ -79,6 +81,7 @@ class CUPSPrinter {
      * @throws PrinterTimeoutException
      * @throws PrinterException
      * @throws ExecutableNotFoundException
+     * @throws PrinterProfileNotFoundException
      */
     public function enqueue(PrintableInterface $printable)
     {
@@ -95,6 +98,15 @@ class CUPSPrinter {
         }
         catch (ProcessTimedOutException $e) {
             throw new PrinterTimeoutException('Print timeout.', 0, $e);
+        }
+        catch (ProcessFailedException $e) {
+            $process = $e->getProcess();
+
+            if (null !== stripos($process->getErrorOutput(), 'The printer or class does not exist.')) {
+                throw new PrinterProfileNotFoundException($this->printerProfile, $e);
+            }
+
+            throw new PrinterException($e->getMessage(), $e->getCode(), $e);
         }
         catch (RuntimeException $e) {
             throw new PrinterException($e->getMessage(), $e->getCode(), $e);
