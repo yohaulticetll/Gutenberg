@@ -3,7 +3,7 @@
     "description": "With the *kofel/gutenberg* library you can feel that PHP likes to have printing support.",
     "license": "MIT",
     "require": {
-        "php": "~5.5",
+        "php": ">=5.5",
         "symfony/process": "~2.6",
         "twig/twig": "^1.22",
         "kofel/process-util": "dev-master"
