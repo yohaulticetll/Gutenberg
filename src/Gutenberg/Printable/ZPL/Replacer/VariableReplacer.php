@@ -49,12 +49,13 @@ class VariableReplacer implements PreprocessorInterface
         if (empty($zpl))
             return '';
 
-        return $this->twig->render($zpl, $params);
+        return $this->twig->createTemplate($zpl)->render($params);
     }
 
     private function createTwigInstance()
     {
-        $twig = new \Twig_Environment(new \Twig_Loader_String());
+        $twig = new \Twig_Environment(new \Twig_Loader_Array());
+
         foreach ($this->getFilters() as $filter) {
             $twig->addFilter(
                 new \Twig_SimpleFilter($filter->getName(), function () use ($filter) {
